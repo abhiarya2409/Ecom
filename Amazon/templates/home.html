@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+{% load cart %}
+{% load static %}
+
+{% block title %}
+Home | Page
+{% endblock title %}
+
+{% block content %}
+
+<!-- Category Section -->
+<div class="container mt-6">
+  <div class="row bg-light text-center">
+    {% for cat in category %}
+      <div class="col my-4">
+        <a href="?cate_id={{ cat.id }}">
+          <img src="{{ cat.category_image.url }}" alt="" width="58" height="58" class="rounded">
+          <br>
+          {{ cat.category_name }}
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Carousel Section -->
+<div class="container mt-3">
+  <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <img src="{% static 'images/logo_1.jpg' %}" class="d-block w-100" alt="..." height="250">
+      </div>
+      <div class="carousel-item">
+        <img src="{% static 'images/logo_2.jpg' %}" class="d-block w-100" alt="..." height="250">
+      </div>
+      <div class="carousel-item">
+        <img src="{% static 'images/banner_3.jpg' %}" class="d-block w-100" alt="..." height="250">
+      </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
+</div>
+
+<!-- Product Section -->
+<div class="container">
+  <div class="row">
+    {% for pro in product %}
+      <div class="col-md-4 my-4">
+        <div class="card h-100">
+          <img src="{{ pro.product_image.url }}" class="card-img-top" alt="..." width="50" height="200">
+          <div class="card-body">
+            <h5 class="card-title">{{ pro.product_name }}</h5>
+            <p class="card-text">Rs.{{ pro.product_price }}</p>
+            <p class="card-text">{{ pro.product_description }}</p>
+          </div>
+          <div class="card-footer text-body-secondary">
+            {% if pro|isexistincart:request.session.cart %}
+              <div class="row">
+                <div class="col">
+                  <form action="#" method="post">
+                    {% csrf_token %}
+                    <input type="text" name="minus" value="{{ pro.id }}" hidden>
+                    <input type="text" name="cartid" value="{{ pro.id }}" hidden>
+                    <input type="submit" value="-" class="btn btn-primary">
+                  </form>
+                </div>
+                <div class="col">
+                  
+                  {{pro|cartquantity:request.session.cart}}
+                </div>
+                <div class="col">
+                  <form action="#" method="post">
+                    {% csrf_token %}
+                   
+                    <input type="text" name="cartid" value="{{ pro.id }}" hidden>
+                    <input type="submit" value="+" class="btn btn-primary">
+                  </form>
+                </div>
+              </div>
+            {% else %}
+              <form action="#" method="post">
+                {% csrf_token %}
+                <input type="text" value="{{ pro.id }}" name="cartid" hidden>
+                <input type="submit" class="btn btn-primary" value="Add to cart">
+              </form>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Best of Fashion Section -->
+
+{% if category_id is None %}
+<div class="container">
+  <h2 class="my-4">Best of Fashion</h2>
+  <div class="row">
+    {% for pro in best_of_fashion %}
+      <div class="col-md-4 my-4">
+        <div class="card h-100">
+          <img src="{{ pro.product_image.url }}" class="card-img-top" alt="..." height="150">
+          <div class="card-body">
+            <h5 class="card-title">{{ pro.product_name }}</h5>
+            <p class="card-text">Rs.{{ pro.product_price }}</p>
+            <p class="card-text">{{ pro.product_description }}</p>
+          </div>
+          <div class="card-footer text-body-secondary">
+            {% if pro|isexistincart:request.session.cart %}   
+            <div class="row">
+              <div class="col">
+                <form action="#" method="post">
+                  {% csrf_token %} 
+                <input type="text" name="minus" value="{{pro.id}}" hidden>
+                <input type="text" name="cartid" value="{{pro.id}}" hidden>
+                <input type="submit" value="-" class="btn btn-primary">
+                </form>
+              </div>
+              <div class="col">
+                {{pro|cartquantity:request.session.cart}}
+                 </div>
+              <div class="col">
+                <form action="#" method="post">
+            {% csrf_token %} 
+                <input type="text" name="cartid" value="{{pro.id}}" hidden>
+                <input type="submit" value="+" class="btn btn-primary">
+                </form>
+              </div>
+            </div>
+      {% else %}
+          <form action="#" method="post">
+            {% csrf_token %}  
+            <input type="text" value="{{pro.id}}" name="cartid" hidden>
+            <input type ="submit" class="btn btn-primary" value="Add 2 Cart">
+          </form>
+          {% endif %}  
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+
+<!--Best of Fitness Section -->
+{% if category_id is None %}
+<div class="container">
+  <h2 class="my-4">Best of Fitness</h2>
+  <div class="row">
+    {% for pro in best_of_fitness %}
+      <div class="col-md-4 my-4">
+        <div class="card h-100">
+          <img src="{{ pro.product_image.url }}" class="card-img-top" alt="..." height="150">
+          <div class="card-body">
+            <h5 class="card-title">{{ pro.product_name }}</h5>
+            <p class="card-text">Rs.{{ pro.product_price }}</p>
+            <p class="card-text">{{ pro.product_description }}</p>
+          </div>
+          <div class="card-footer text-body-secondary">
+            {% if pro|isexistincart:request.session.cart %}   
+            <div class="row">
+              <div class="col">
+                <form action="#" method="post">
+                  {% csrf_token %} 
+                <input type="text" name="minus" value="{{pro.id}}" hidden>
+                <input type="text" name="cartid" value="{{pro.id}}" hidden>
+                <input type="submit" value="-" class="btn btn-primary">
+                </form>
+              </div>
+              <div class="col">
+                {{pro|cartquantity:request.session.cart}}
+                 </div>
+              <div class="col">
+                <form action="#" method="post">
+            {% csrf_token %} 
+                <input type="text" name="cartid" value="{{pro.id}}" hidden>
+                <input type="submit" value="+" class="btn btn-primary">
+                </form>
+              </div>
+            </div>
+      {% else %}
+          <form action="#" method="post">
+            {% csrf_token %}  
+            <input type="text" value="{{pro.id}}" name="cartid" hidden>
+            <input type ="submit" class="btn btn-primary" value="Add 2 Cart">
+          </form>
+          {% endif %}  
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+{% endblock content %}
+
+
